@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 #Format input data
-def train(feat_name: str, data, model: xgboost.XGBClassifier):
+def train(data, model: xgboost.XGBClassifier):
     train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy = data
     #Edit this variable to create a list that contains your feature names
     #you could just pass in the matrix of features to xgboost

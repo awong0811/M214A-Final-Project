@@ -26,7 +26,7 @@ def get_label(file_name):
     raise ValueError('invalid file name')
   return label
 
-def train_test_preprocess(feat_name, func, args: dict):
+def train_test_preprocess(func, feat_name: str, args: dict):
     train_files = glob('./project_data/train/*.wav')
     train_files.sort()
     train_feat=[]
