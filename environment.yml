@@ -1,0 +1,20 @@
+name: xgb
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.10
+  - py-xgboost
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - librosa
+  - numpy
+  - matplotlib
+  - scikit-learn
+  - tqdm
+  - pandas
+  - shap
+  - jupyter
