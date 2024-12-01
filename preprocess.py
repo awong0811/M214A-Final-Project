@@ -4,6 +4,7 @@ import numpy as np
 from glob import glob
 from tqdm import tqdm
 import pandas as pd
+from scipy.signal import butter, filtfilt
 
 # Reusable code
 def get_label(file_name):
@@ -99,4 +100,52 @@ def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False):
         out = librosa.feature.delta(mfccs,order=2)
         out = np.mean(out,axis=1)
         feat_out = np.concatenate((feat_out,out),axis=None)
+    return feat_out
+
+def f0_contour(audio_file):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    
+    # F0 Contour (using librosa's pitch tracker)
+    pitches, magnitudes = librosa.piptrack(y=audio, sr=fs)
+    f0_contour = np.max(pitches, axis=0)  # Max pitch for each frame
+    f0_contour = f0_contour[f0_contour > 0]  # Keep only non-zero values
+    feat_out = np.array([np.mean(f0_contour), np.std(f0_contour)])
+    return feat_out
+
+def energy_contour(audio_file):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    frame_length = int(0.02 * fs)  # 20 ms frames
+    hop_length = int(0.01 * fs)   # 10 ms hop
+    energy_contour = np.array([
+        np.sum(audio[i:i + frame_length]**2)
+        for i in range(0, len(audio) - frame_length + 1, hop_length)
+    ])
+
+    # Filtering for Low-pass and High-pass
+    nyquist = 0.5 * fs
+    low_cutoff = 1000 / nyquist
+    high_cutoff = 1000 / nyquist
+
+    # Low-pass filter
+    b, a = butter(4, low_cutoff, btype='low')
+    lowpassed_audio = filtfilt(b, a, audio)
+    energy_contour_lowpass = np.array([
+        np.sum(lowpassed_audio[i:i + frame_length]**2)
+        for i in range(0, len(lowpassed_audio) - frame_length + 1, hop_length)
+    ])
+
+    # High-pass filter
+    b, a = butter(4, high_cutoff, btype='high')
+    highpassed_audio = filtfilt(b, a, audio)
+    energy_contour_highpass = np.array([
+        np.sum(highpassed_audio[i:i + frame_length]**2)
+        for i in range(0, len(highpassed_audio) - frame_length + 1, hop_length)
+    ])
+    feat_out = np.array([
+        np.mean(energy_contour), np.std(energy_contour),
+        np.mean(energy_contour_lowpass), np.std(energy_contour_lowpass),
+        np.mean(energy_contour_highpass), np.std(energy_contour_highpass)
+    ])
     return feat_out
