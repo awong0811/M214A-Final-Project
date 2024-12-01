@@ -71,7 +71,7 @@ def save_features(data, name: str):
 # Feature Extraction
 def first_deriv(audio_file, downsample):
     y, sr = librosa.load(audio_file, sr=None)
-    new_sr = sr//40
+    new_sr = sr//downsample
     audio = librosa.resample(y, orig_sr=sr, target_sr=new_sr)
     feat_out = librosa.feature.delta(audio,order=1)
     return feat_out
