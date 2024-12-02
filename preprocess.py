@@ -116,7 +116,7 @@ def second_deriv(audio_file, downsample):
     return feat_out
 
 
-def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False):
+def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False, include_std=False):
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
 
@@ -131,6 +131,9 @@ def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False):
         out = librosa.feature.delta(mfccs,order=2)
         out = np.mean(out,axis=1)
         feat_out = np.concatenate((feat_out,out),axis=None)
+    if include_std:
+        std = np.std(mfccs,axis=1)
+        feat_out = np.concatenate((feat_out,std),axis=0)
     return feat_out
 
 def log_mel_spectrogram(audio_file, include_std: bool):
