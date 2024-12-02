@@ -72,9 +72,9 @@ def save_features(data, name: str):
 
 def load_features(name: str):
     directory = 'saved_features'
-    train_feat_df = pd.read_csv(f'{directory}/{name}_train.csv')
-    test_clean_feat_df = pd.read_csv(f'{directory}/{name}_test_clean.csv')
-    test_noisy_feat_df = pd.read_csv(f'{directory}/{name}_test_noisy.csv')
+    train_feat_df = pd.read_csv(f'{directory}/{name}_train.csv').iloc[:, 1:]
+    test_clean_feat_df = pd.read_csv(f'{directory}/{name}_test_clean.csv').iloc[:, 1:]
+    test_noisy_feat_df = pd.read_csv(f'{directory}/{name}_test_noisy.csv').iloc[:, 1:]
     return train_feat_df, test_clean_feat_df, test_noisy_feat_df
 
 def concatenate_features(names: list[str]):
@@ -89,11 +89,9 @@ def concatenate_features(names: list[str]):
        test_noisy_stack.append(dataframes[2])
 
     # # Concatenate features
-    # train_df_1, test_clean_df_1, test_noisy_df_1 = load_features(name=name1)
-    # train_df_2, test_clean_df_2, test_noisy_df_2 = load_features(name=name2)
-    train_df_concat = pd.concat(train_stack, axis=1, ignore_index=True)
-    test_clean_df_concat = pd.concat(test_clean_stack, axis=1, ignore_index=True)
-    test_noisy_df_concat = pd.concat(test_noisy_stack, axis=1, ignore_index=True)
+    train_df_concat = pd.concat(train_stack, axis=1)
+    test_clean_df_concat = pd.concat(test_clean_stack, axis=1)
+    test_noisy_df_concat = pd.concat(test_noisy_stack, axis=1)
     # Load in labels
     data = np.load(r'saved_features\labels.npz')
     y_train,y_test_clean,y_test_noisy, = data['y_train'],data['y_test_clean'],data['y_test_noisy']
