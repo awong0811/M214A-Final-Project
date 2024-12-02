@@ -67,6 +67,7 @@ def save_features(data, name: str):
     train_feat_df.to_csv(f'{directory}/{name}_train.csv')
     test_clean_feat_df.to_csv(f'{directory}/{name}_test_clean.csv')
     test_noisy_feat_df.to_csv(f'{directory}/{name}_test_noisy.csv')
+    np.savez(f'{directory}/labels.npz', y_train=y_train, y_test_clean=y_test_clean, y_test_noisy=y_test_noisy)
     return
 
 def load_features(name: str):
@@ -75,6 +76,28 @@ def load_features(name: str):
     test_clean_feat_df = pd.read_csv(f'{directory}/{name}_test_clean.csv')
     test_noisy_feat_df = pd.read_csv(f'{directory}/{name}_test_noisy.csv')
     return train_feat_df, test_clean_feat_df, test_noisy_feat_df
+
+def concatenate_features(names: list[str]):
+    # Concatenate features
+    train_stack = []
+    test_clean_stack = []
+    test_noisy_stack = []
+    for name in names:
+       dataframes = load_features(name)
+       train_stack.append(dataframes[0])
+       test_clean_stack.append(dataframes[1])
+       test_noisy_stack.append(dataframes[2])
+
+    # # Concatenate features
+    # train_df_1, test_clean_df_1, test_noisy_df_1 = load_features(name=name1)
+    # train_df_2, test_clean_df_2, test_noisy_df_2 = load_features(name=name2)
+    train_df_concat = pd.concat(train_stack, axis=1, ignore_index=True)
+    test_clean_df_concat = pd.concat(test_clean_stack, axis=1, ignore_index=True)
+    test_noisy_df_concat = pd.concat(test_noisy_stack, axis=1, ignore_index=True)
+    # Load in labels
+    data = np.load(r'saved_features\labels.npz')
+    y_train,y_test_clean,y_test_noisy, = data['y_train'],data['y_test_clean'],data['y_test_noisy']
+    return train_df_concat,y_train,test_clean_df_concat,y_test_clean,test_noisy_df_concat,y_test_noisy
 
 # Feature Extraction
 def first_deriv(audio_file, downsample):
