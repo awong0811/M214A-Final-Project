@@ -19,3 +19,5 @@ dependencies:
   - shap
   - jupyter
   - scipy
+  - pip:
+    - spafe
