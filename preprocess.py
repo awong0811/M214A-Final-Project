@@ -69,6 +69,13 @@ def save_features(data, name: str):
     test_noisy_feat_df.to_csv(f'{directory}/{name}_test_noisy.csv')
     return
 
+def load_features(name: str):
+    directory = 'saved_features'
+    train_feat_df = pd.read_csv(f'{directory}/{name}_train.csv')
+    test_clean_feat_df = pd.read_csv(f'{directory}/{name}_test_clean.csv')
+    test_noisy_feat_df = pd.read_csv(f'{directory}/{name}_test_noisy.csv')
+    return train_feat_df, test_clean_feat_df, test_noisy_feat_df
+
 # Feature Extraction
 def first_deriv(audio_file, downsample):
     y, sr = librosa.load(audio_file, sr=None)
@@ -100,6 +107,17 @@ def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False):
         out = librosa.feature.delta(mfccs,order=2)
         out = np.mean(out,axis=1)
         feat_out = np.concatenate((feat_out,out),axis=None)
+    return feat_out
+
+def log_mel_spectrogram(audio_file, include_std: bool):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    mel_spectrogram = librosa.feature.melspectrogram(y=audio, sr=fs, n_mels=128)
+    mel_spectrogram_db = librosa.power_to_db(mel_spectrogram, ref=np.max)
+    feat_out = np.mean(mel_spectrogram_db,axis=1)
+    if include_std:
+       std = np.std(mel_spectrogram_db,axis=1)
+       feat_out = np.concatenate((feat_out, std), axis=0)
     return feat_out
 
 def f0_contour(audio_file):
