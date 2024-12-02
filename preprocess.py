@@ -5,6 +5,9 @@ from glob import glob
 from tqdm import tqdm
 import pandas as pd
 from scipy.signal import butter, filtfilt
+from spafe.features.gfcc import gfcc
+from spafe.features.pncc import pncc
+from spafe.features.rplp import plp
 
 # Reusable code
 def get_label(file_name):
@@ -187,4 +190,34 @@ def energy_contour(audio_file):
         np.mean(energy_contour_lowpass), np.std(energy_contour_lowpass),
         np.mean(energy_contour_highpass), np.std(energy_contour_highpass)
     ])
+    return feat_out
+
+def extract_pncc(audio_file, include_std: bool, n_pncc=13):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    pnccs = pncc(sig=audio, fs=fs, num_ceps=n_pncc)
+    feat_out = np.mean(pnccs,axis=0)
+    if include_std:
+       std = np.std(pnccs,axis=1)
+       feat_out = np.concatenate((feat_out,std),axis=0)
+    return feat_out
+
+def extract_gfcc(audio_file, include_std: bool, n_gfcc=13):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    gfccs = gfcc(sig=audio, fs=fs, num_ceps=n_gfcc)
+    feat_out = np.mean(gfccs,axis=0)
+    if include_std:
+       std = np.std(gfccs,axis=1)
+       feat_out = np.concatenate((feat_out,std),axis=0)
+    return feat_out
+
+def extract_plp(audio_file, include_std: bool, order=13):
+    audio,fs = torchaudio.load(audio_file)
+    audio = audio.numpy().reshape(-1)
+    plpcs = plp(sig=audio, fs=fs, order=order)
+    feat_out = np.mean(plpcs,axis=0)
+    if include_std:
+      std = np.std(plpcs,axis=1)
+      feat_out = np.concatenate((feat_out, std), axis=0)
     return feat_out
