@@ -37,7 +37,10 @@ def get_label(file_name):
 
 def train_test_preprocess(func, feat_name: str, args: dict):
     ''' Creates the training, testing (clean), and testing (noisy) dataframes and labels.
-    
+    Arguments
+    func: Feature extraction function. Select from the feature extraction section below in this file.
+    feat_name: Name for the feature dataframes.
+    args: Dictionary of keys and values for the arguments of the feature extraction function.
     '''
     train_files = glob('./project_data/train/*.wav')
     train_files.sort()
@@ -73,6 +76,11 @@ def train_test_preprocess(func, feat_name: str, args: dict):
     return train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy
 
 def save_features(data, name: str):
+    ''' Saves features to a './saved_features/' directory.
+    Arguments
+    data: Output of the train_test_preprocess() function.
+    name: Desired name for the .csv files.
+    '''
     print('Saving features...')
     train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy = data
     directory = 'saved_features'
@@ -84,6 +92,10 @@ def save_features(data, name: str):
     return
 
 def load_features(name: str):
+    ''' Loads training and testing features from the corresponding .csv files.
+    Arguments
+    name: Name (not including _train, _test_... etc.) of .csv files to load features from.
+    '''
     directory = 'saved_features'
     train_feat_df = pd.read_csv(f'{directory}/{name}_train.csv').iloc[:, 1:]
     test_clean_feat_df = pd.read_csv(f'{directory}/{name}_test_clean.csv').iloc[:, 1:]
@@ -91,6 +103,10 @@ def load_features(name: str):
     return train_feat_df, test_clean_feat_df, test_noisy_feat_df
 
 def concatenate_features(names: list[str]):
+    ''' Concatenate preexisting sets of features.
+    Arguments
+    names: Names (not including _train, _test_... etc.) of .csv files to load in and concatenate.
+    '''
     # Concatenate features
     print(f'Concatenating features: {", ".join(names)}')
     train_stack = []
@@ -134,6 +150,11 @@ def concatenate_features(names: list[str]):
 
 ################### Feature Extraction #########################
 def first_deriv(audio_file, downsample):
+    ''' Takes the first derivative of a waveform.
+    Arguments
+    audio_file: Path to an audio_file.
+    downsample: Downsampling factor.
+    '''
     y, sr = librosa.load(audio_file, sr=None)
     new_sr = sr//downsample
     audio = librosa.resample(y, orig_sr=sr, target_sr=new_sr)
@@ -141,6 +162,11 @@ def first_deriv(audio_file, downsample):
     return feat_out
 
 def second_deriv(audio_file, downsample):
+    ''' Takes the second derivative of a waveform.
+    Arguments
+    audio_file: Path to an audio_file.
+    downsample: Downsampling factor.
+    '''
     y, sr = librosa.load(audio_file, sr=None)
     new_sr = sr//downsample
     audio = librosa.resample(y, orig_sr=sr, target_sr=new_sr)
@@ -149,6 +175,14 @@ def second_deriv(audio_file, downsample):
 
 
 def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False, include_std=False):
+    ''' Calculates the MFCCs (averaged across time) of a waveform and the derivatives of the MFCCs.
+    Arguments
+    audio_file: Path to an audio_file.
+    n_mfcc: Number of MFCCs (mean across time) to calculate.
+    fderiv: Take the first derivative of the MFCCs.
+    sderiv: Take the second derivative of the MFCCs.
+    include_std: Calculate the standard deviation of each MFCC across time.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
 
@@ -169,6 +203,11 @@ def mfcc(audio_file, n_mfcc=13, fderiv=False, sderiv=False, include_std=False):
     return feat_out
 
 def log_mel_spectrogram(audio_file, include_std: bool):
+    ''' Computes the log mel spectrogram (averaged across time).
+    Arguments
+    audio_file: Path to an audio file.
+    include_std: Compute the standard deviation of the log mel spectrogram across time.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     mel_spectrogram = librosa.feature.melspectrogram(y=audio, sr=fs, n_mels=128)
@@ -180,6 +219,10 @@ def log_mel_spectrogram(audio_file, include_std: bool):
     return feat_out
 
 def f0_contour(audio_file):
+    ''' Compute the pitch contour.
+    Arguments
+    audio_file: Path to an audio file.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     
@@ -191,6 +234,10 @@ def f0_contour(audio_file):
     return feat_out
 
 def energy_contour(audio_file):
+    ''' Compute the energy contour.
+    Arguments
+    audio_file: Path to an audio file.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     frame_length = int(0.02 * fs)  # 20 ms frames
@@ -228,6 +275,12 @@ def energy_contour(audio_file):
     return feat_out
 
 def extract_pncc(audio_file, include_std: bool, n_pncc=13):
+    ''' Compute the Power Normalized Cepstral Coefficients (averaged across time).
+    Arguments
+    audio_file: Path to an audio file.
+    include_std: Compute the standard deviation of each PNCC across time.
+    n_pncc: Number of PNCCs to compute.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     pnccs = pncc(sig=audio, fs=fs, num_ceps=n_pncc)
@@ -238,6 +291,11 @@ def extract_pncc(audio_file, include_std: bool, n_pncc=13):
     return feat_out
 
 def extract_gfcc(audio_file, include_std: bool, n_gfcc=13):
+    ''' Compute the Gamma Frequency Cepstral Coefficients (averaged across time).
+    audio_file: Path to an audio file.
+    include_std: Compute the standard deviation of each GFCC across time.
+    n_gfcc: Number of GFCCs to compute.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     gfccs = gfcc(sig=audio, fs=fs, num_ceps=n_gfcc)
@@ -248,6 +306,11 @@ def extract_gfcc(audio_file, include_std: bool, n_gfcc=13):
     return feat_out
 
 def extract_plp(audio_file, include_std: bool, order=13):
+    ''' Compute the Perceptual Linear Prediction coefficients (averaged across time).
+    audio_file: Path to an audio file.
+    include_std: Compute the standard deviation of each PLP(c) across time.
+    order: Order of PLPs to compute.
+    '''
     audio,fs = torchaudio.load(audio_file)
     audio = audio.numpy().reshape(-1)
     plpcs = plp(sig=audio, fs=fs, order=order)
@@ -259,6 +322,11 @@ def extract_plp(audio_file, include_std: bool, order=13):
 
 # Wav2Vec2 Feature Extraction
 def extract_w2v2(audio_file, processor, model):
+    ''' Extracting Wave2Vec2 features (averaged across time).
+    audio_file: Path to an audio file.
+    processor: Wave2Vec2 processor (refer to Huggingface documentation for Wave2Vec2).
+    model: Wave2Vec2 model (refer to Huggingface documentation for Wave2Vec2).
+    '''
     raw_audio,_ = librosa.load(audio_file, sr=16000)
     inputs = processor(raw_audio, sampling_rate=16000, return_tensors="pt")
     input_values = inputs["input_values"]  # Preprocessed waveform
