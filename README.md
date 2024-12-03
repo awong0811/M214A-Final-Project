@@ -14,7 +14,6 @@ REWRITE THIS IN GREATER DETAIL
 Simply run the cells in the jupyter notebook sequentially. The utility functions are in the separate train.py and preprocess.py files to improve readability.
 
 ## Data Pipeline
-REMEMBER TO FILL THIS OUT
 
 REMEMBER TO UPLOAD SAVED FEATURES
 
