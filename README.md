@@ -7,7 +7,7 @@ If running locally, you can install the environment using conda:
 $ conda env create -f environment.yml
 ```
 This creates an environment called 'xgb'.
-Otherwise, create a python virtual environment and install the packages in the environment.yml file.
+Otherwise, create a python virtual environment and install the packages in the environment.yml file. The specific versions of the packages are listed in the requirements.txt file (also conda-only for direct installation).
 
 ## Running the Notebook/Data Pipeline
 The utility functions are in the separate train.py, preprocess.py, and explainability files to improve readability.
