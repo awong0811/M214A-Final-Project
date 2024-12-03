@@ -13,7 +13,7 @@ from transformers import Wav2Vec2Processor, Wav2Vec2Model
 import torch
 
 
-# Reusable code
+####################### Reusable code #################################
 def get_label(file_name):
   '''
   Function to retrieve output labels from filenames
@@ -104,7 +104,7 @@ def concatenate_features(names: list[str]):
     y_train,y_test_clean,y_test_noisy, = data['y_train'],data['y_test_clean'],data['y_test_noisy']
     return train_df_concat,y_train,test_clean_df_concat,y_test_clean,test_noisy_df_concat,y_test_noisy
 
-# Feature Extraction
+################### Feature Extraction #########################
 def first_deriv(audio_file, downsample):
     y, sr = librosa.load(audio_file, sr=None)
     new_sr = sr//downsample
