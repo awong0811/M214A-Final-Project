@@ -10,7 +10,7 @@ This creates an environment called 'xgb'.
 Otherwise, create a python virtual environment and install the packages in the environment.yml file. The specific versions of the packages are listed in the requirements.txt file (also conda-only for direct installation).
 
 ## Saved Features
-Here's the [link](https://drive.google.com/file/d/1A2Ve2IBPSgJmcVmx1NVWEIX4eGza2Xm4/view?usp=sharing) to a zip folder of saved features that can be used to run the entire notebook without creating new features. Simply load in desired features as shown below. <name> only includes the feature name; does not include '_train', '_test...', etc. The load_features() function returns the training, testing (clean), and testing (noisy) dataframes in that order.
+Here's the [link](https://drive.google.com/file/d/1A2Ve2IBPSgJmcVmx1NVWEIX4eGza2Xm4/view?usp=sharing) to a zip folder of saved features that can be used to run the entire notebook without creating new features. Simply load in desired features as shown below. Variable "name" only includes the feature name; does not include '_train', '_test...', etc. The load_features() function returns the training, testing (clean), and testing (noisy) dataframes in that order.
 ```python
 from preprocess import *
 feat_dataframes = load_features(<name>)
