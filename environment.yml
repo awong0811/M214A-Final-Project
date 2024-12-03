@@ -5,6 +5,7 @@ channels:
   - nvidia
 dependencies:
   - python=3.10
+  - pip
   - py-xgboost
   - pytorch
   - torchvision
@@ -19,5 +20,6 @@ dependencies:
   - shap
   - jupyter
   - scipy
+  - transformers
   - pip:
     - spafe

@@ -8,6 +8,10 @@ from scipy.signal import butter, filtfilt
 from spafe.features.gfcc import gfcc
 from spafe.features.pncc import pncc
 from spafe.features.rplp import plp
+# Wav2Vec2
+from transformers import Wav2Vec2Processor, Wav2Vec2Model
+import torch
+
 
 # Reusable code
 def get_label(file_name):
@@ -223,4 +227,17 @@ def extract_plp(audio_file, include_std: bool, order=13):
     if include_std:
       std = np.std(plpcs,axis=1)
       feat_out = np.concatenate((feat_out, std), axis=0)
+    return feat_out
+
+# Wav2Vec2 Feature Extraction
+def extract_w2v2(audio_file, processor, model):
+    raw_audio,_ = librosa.load(audio_file, sr=16000)
+    inputs = processor(raw_audio, sampling_rate=16000, return_tensors="pt")
+    input_values = inputs["input_values"]  # Preprocessed waveform
+    # Pass through the model
+    with torch.no_grad():
+        outputs = model(input_values)
+    # Extract final features (hidden states from the last layer)
+    hidden_states = outputs.last_hidden_state.squeeze(0).numpy()
+    feat_out = np.concatenate([np.mean(hidden_states, axis=0), np.std(hidden_states, axis=0)])
     return feat_out
