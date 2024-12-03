@@ -8,6 +8,7 @@ from scipy.signal import butter, filtfilt
 from spafe.features.gfcc import gfcc
 from spafe.features.pncc import pncc
 from spafe.features.rplp import plp
+import os
 # Wav2Vec2
 from transformers import Wav2Vec2Processor, Wav2Vec2Model
 import torch
@@ -71,6 +72,7 @@ def train_test_preprocess(func, feat_name: str, args: dict):
 def save_features(data, name: str):
     train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy = data
     directory = 'saved_features'
+    os.makedirs(directory, exist_ok=True)
     train_feat_df.to_csv(f'{directory}/{name}_train.csv')
     test_clean_feat_df.to_csv(f'{directory}/{name}_test_clean.csv')
     test_noisy_feat_df.to_csv(f'{directory}/{name}_test_noisy.csv')

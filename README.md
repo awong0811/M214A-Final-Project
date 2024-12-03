@@ -21,7 +21,7 @@ from train import *
 from explainability import * 
 ```
 \
-Running this block of code makes a new set of features based on which feature extraction function you pick and saves the features. A new XGBoost model is fitted and the shap chart/confusion matrices are displayed as well.
+Running this block of code makes a new set of features based on which feature extraction function you pick and saves the features. If a ./saved_features/ directory does not already exist, it is created and the features are saved in there. A new XGBoost model is fitted and the shap chart/confusion matrices are displayed as well.
 ```python
 name = '<desired_feature_name>'
 args_dict = {'<arg>': <arg_val>}
