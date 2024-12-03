@@ -44,6 +44,7 @@ save_features(data, name)
 shap_explain(data[0],model)
 confusion_matrix(data, model)
 ```
+\
 Below is a description of the train_test_preprocess() function in preprocess.py. The rest of the functions should be self-explanatory. Refer to the docstrings in the functions for further clarification if needed.
 
 | Arguments | Type | Description |
