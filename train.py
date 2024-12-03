@@ -4,6 +4,7 @@ import pandas as pd
 
 #Format input data
 def train(data, model: xgboost.XGBClassifier):
+    print('Fitting model...')
     train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy = data
     
     model.fit(train_feat_df,y_train)

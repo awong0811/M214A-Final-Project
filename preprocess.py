@@ -36,6 +36,9 @@ def get_label(file_name):
   return label
 
 def train_test_preprocess(func, feat_name: str, args: dict):
+    ''' Creates the training, testing (clean), and testing (noisy) dataframes and labels.
+    
+    '''
     train_files = glob('./project_data/train/*.wav')
     train_files.sort()
     train_feat=[]
@@ -70,6 +73,7 @@ def train_test_preprocess(func, feat_name: str, args: dict):
     return train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy
 
 def save_features(data, name: str):
+    print('Saving features...')
     train_feat_df, y_train, test_clean_feat_df, y_test_clean, test_noisy_feat_df, y_test_noisy = data
     directory = 'saved_features'
     os.makedirs(directory, exist_ok=True)
@@ -88,6 +92,7 @@ def load_features(name: str):
 
 def concatenate_features(names: list[str]):
     # Concatenate features
+    print(f'Concatenating features: {", ".join(names)}')
     train_stack = []
     test_clean_stack = []
     test_noisy_stack = []
@@ -97,13 +102,34 @@ def concatenate_features(names: list[str]):
        test_clean_stack.append(dataframes[1])
        test_noisy_stack.append(dataframes[2])
 
-    # # Concatenate features
     train_df_concat = pd.concat(train_stack, axis=1)
     test_clean_df_concat = pd.concat(test_clean_stack, axis=1)
     test_noisy_df_concat = pd.concat(test_noisy_stack, axis=1)
+
     # Load in labels
-    data = np.load(r'saved_features\labels.npz')
-    y_train,y_test_clean,y_test_noisy, = data['y_train'],data['y_test_clean'],data['y_test_noisy']
+    print('Concatenating labels...')
+    train_files = glob('./project_data/train/*.wav')
+    train_files.sort()
+    train_label=[]
+    for wav in tqdm(train_files):
+        train_label.append(get_label(wav))
+
+    test_clean_files = glob('./project_data/test_clean/*.wav')
+    test_clean_files.sort()
+    test_clean_label=[]
+    for wav in tqdm(test_clean_files):
+        test_clean_label.append(get_label(wav))
+
+    test_noisy_files = glob('./project_data/test_noisy/*.wav')
+    test_noisy_files.sort()
+    test_noisy_label=[]
+    for wav in tqdm(test_noisy_files):
+        test_noisy_label.append(get_label(wav))
+
+    y_train=np.stack(train_label)
+    y_test_clean=np.stack(test_clean_label)
+    y_test_noisy=np.stack(test_noisy_label)
+
     return train_df_concat,y_train,test_clean_df_concat,y_test_clean,test_noisy_df_concat,y_test_noisy
 
 ################### Feature Extraction #########################
