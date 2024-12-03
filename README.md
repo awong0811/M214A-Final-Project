@@ -11,8 +11,8 @@ Otherwise, create a python virtual environment and install the packages in the e
 
 ## Running the Notebook/Data Pipeline
 The utility functions are in the separate train.py, preprocess.py, and explainability files to improve readability.
-The train.py and explainability.py files contain the given code for fitting the model and generating the SHAP charts/confusion matrices respectively.\
-
+The train.py and explainability.py files contain the given code for fitting the model and generating the SHAP charts/confusion matrices respectively.
+\
 Running this should import everything you need to run the data pipeline.
 ```python
 from preprocess import *
@@ -44,8 +44,8 @@ confusion_matrix(data, model)
 ```
 Below is a description of the train_test_preprocess() function in preprocess.py. The rest of the functions should be self-explanatory. Refer to the docstrings in the functions for further clarification if needed.
 
-| Arguments | Type/Default Value | Description |
-|-----------|--------------------|-------------|
+| Arguments | Type | Description |
+|-----------|------|-------------|
 | func | Python function | Select one of the feature extraction functions in the preprocess.py file from the Feature Extraction section. |
 | feat_name | str | Desired name for the features in the dataframes. |
 | args | dict | A dictionary with keys and values for the corresponding arguments in the feature extraction function (func). This dictionary will be unpacked and passed into func. See code in notebook for examples. |
