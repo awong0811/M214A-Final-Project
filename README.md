@@ -1,5 +1,5 @@
 # M214A Final Project
-Anthony Wong, Mohammad Alkharafi, Borys Jastrzebski
+Anthony Wong, Mohammad Alkharafi
 
 ## Installation
 If running locally, you can install the environment using conda:
